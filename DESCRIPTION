@@ -1,0 +1,16 @@
+Package: spatialbiodiv
+Type: Package
+Title: Calculate Spatial Biodiversity Patterns
+Version: 0.1.0
+Author: Felix May
+Maintainer: Felix May <felix.may@fu-berlin.de>
+Description: Derive spatially-explicit species-rarefaction and distance-decay of
+    similarity curves from sample-based biodiversity data with coordinates.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    monogamy,
+    stats
+Suggests: 
+    tidyverse

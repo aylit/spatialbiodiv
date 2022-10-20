@@ -1,0 +1,120 @@
+---
+title: "Test analyses of simulated data"
+author: "Felix May"
+date: "2022-10-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "..")
+devtools::load_all(".")
+```
+
+# Load packages
+
+```{r}
+library(tidyverse)
+library(vegan)
+```
+
+
+# Read and prepare the data
+
+```{r}
+simdat1 <- read.table("data_raw/GeDo_test5_rep_10_output_sample.txt", header = TRUE, sep = ",")
+simdat1 <- simdat1 %>% select(-X)
+```
+
+Filter high and low fragmentation scenarios
+
+```{r}
+frag_low <- simdat1 %>%
+  filter(step == 31 & fragmentation == 0.1)
+
+frag_high <- simdat1 %>%
+  filter(step == 31 & fragmentation == 0.5)
+```
+
+## Prepare data for spatial biodiversity curves
+
+Get abundance tables with rows in samples and species in columns
+
+```{r}
+frag01_spec <- frag_low %>%
+  select(sp_1:sp_200)
+
+frag05_spec <- frag_high %>%
+  select(sp_1:sp_200)
+```
+
+Get spatial coordinates of the samples
+
+```{r}
+xy_frag01 <-  frag_low %>%
+  select(loc_x, loc_y)
+
+xy_frag05 <-  frag_high %>%
+  select(loc_x, loc_y)
+```
+
+# Spatial sample-based rarefaction curves (sSBR)
+
+```{r}
+sSBR_frag01 <- SCR(comm = frag01_spec, xy_coords = xy_frag01)
+sSBR_frag05 <- SCR(comm = frag05_spec, xy_coords = xy_frag05)
+```
+
+
+## Create dataframe for plotting with ggplot
+
+```{r}
+sSBR_frag01$sSBR_data$fragmentation <- "Low"
+sSBR_frag01$sSBR_smooth$fragmentation <- "Low"
+
+sSBR_frag05$sSBR_data$fragmentation <- "High"
+sSBR_frag05$sSBR_smooth$fragmentation <- "High"
+
+sSBR_data <- bind_rows(sSBR_frag01$sSBR_data, sSBR_frag05$sSBR_data)
+sSBR_smooth <- bind_rows(sSBR_frag01$sSBR_smooth, sSBR_frag05$sSBR_smooth)
+
+```
+
+## Plot the sSBR curves
+
+```{r}
+ggplot(sSBR_data, aes(distance, S, group = interaction(id, fragmentation),
+                      color = fragmentation)) +
+  geom_line() +
+  geom_line(aes(distance, S, color = fragmentation, group = fragmentation),
+            data = sSBR_smooth, size = 2)
+```
+
+# Distance-decay curves
+
+```{r}
+dd_frag01 <- dist_decay(comm = frag01_spec, xy_coords = xy_frag01)
+dd_frag05 <- dist_decay(comm = frag05_spec, xy_coords = xy_frag05)
+```
+
+## Create dataframe for plotting with ggplot
+
+```{r}
+dd_frag01$dd_data$fragmentation <- "Low"
+dd_frag01$dd_smooth$fragmentation <- "Low"
+
+dd_frag05$dd_data$fragmentation <- "High"
+dd_frag05$dd_smooth$fragmentation <- "High"
+
+dd_data <- bind_rows(dd_frag01$dd_data, dd_frag05$dd_data)
+dd_smooth <- bind_rows(dd_frag01$dd_smooth, dd_frag05$dd_smooth)
+```
+
+## Plot the distance-decay curves
+
+```{r}
+ggplot(dd_data, aes(distance, similarity, color = fragmentation)) +
+  geom_point() +
+  geom_line(aes(distance, similarity, color = fragmentation, group = fragmentation),
+            data = dd_smooth, size = 2)
+```
