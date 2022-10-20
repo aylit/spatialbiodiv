@@ -14,3 +14,5 @@ Imports:
     stats
 Suggests: 
     tidyverse
+URL: https://github.com/FelixMay/spatialbiodiv
+BugReports: https://github.com/FelixMay/spatialbiodiv/issues
