@@ -27,7 +27,7 @@
 #'         Each samples is used as a starting point and then samples are accumulated
 #'         by distances to the k nearest neighbour.
 #'         The second dataframe, \code{ssBR_smooth} includes a non-linear smoother
-#'        \code{\link[stats]{loess}} for the relationship between cimulative distance and
+#'        \code{\link[stats]{loess}} for the relationship between cumulative distance and
 #'        cumulative species richness.
 #' @export
 #'
