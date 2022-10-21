@@ -14,7 +14,7 @@ abundance data with counts of individuals.}
 \item{xy_coords}{Two-column table with x-y coordinates of the samples.}
 }
 \value{
-The function returns a list of two dataframes. The first, `sSBR_data` includes
+The function returns a list of two dataframes. The first, \code{sSBR_data} includes
         all accumulated distances and their respective accumulated species richness for
         the same number of rarefaction curves as there are samples in the data set.
         Each samples is used as a starting point and then samples are accumulated
