@@ -19,7 +19,7 @@ You can install the development version of spatialbiodiv from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("FelixMay/spatialbiodiv")
+devtools::install_github("FelixMay/spatialbiodiv", build_vignettes = TRUE)
 ```
 
 ## Example

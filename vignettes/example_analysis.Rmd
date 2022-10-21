@@ -67,7 +67,6 @@ sSBR_frag01 <- sSBR(comm = frag01_spec, xy_coords = xy_frag01)
 sSBR_frag05 <- sSBR(comm = frag05_spec, xy_coords = xy_frag05)
 ```
 
-
 ## Create dataframe for plotting with ggplot
 
 ```{r}
@@ -98,7 +97,6 @@ ggplot(sSBR_data, aes(distance, S, group = interaction(id, fragmentation),
 dd_frag01 <- dist_decay(comm = frag01_spec, xy_coords = xy_frag01)
 dd_frag05 <- dist_decay(comm = frag05_spec, xy_coords = xy_frag05)
 ```
-
 
 ## Create dataframe for plotting with ggplot
 
