@@ -1,26 +1,38 @@
-# Spatially-constrained rarefaction curve --------------
+#' Spatially-explicit sample-based species rarefaction curve
+#'
+#' This function calculates the spatial and sample-based species rarefaction curve
+#' (sSBR after McGlinn et al. 2019), also called spatially-constrained
+#' rarefaction curve (SCR) (Chiarucci et al. 2009).
+#'
+#' @param comm Community matrix with samples in rows and species in columns.
+#'             The matrix can contain presence/absence data (coded with 0/1) or
+#'             abundance data with counts of individuals.
+#'
+#' @param xy_coords Two-column table with x-y coordinates of the samples.
+#'
+#' @details In contrast to McGlinn et al. 2019, this function uses accumulated distances
+#' among samples as x-axis and not the accumulated number of samples.
+#'
+#' @references McGlinn, D. J. et al. 2019. Measurement of Biodiversity (MoB):
+#'  A method to separate the scale-dependent effects of species abundance distribution,
+#'   density, and aggregation on diversity change. - Methods in Ecology and Evolution 10: 258–269.
+#'
+#'  Chiarucci, A. et al. 2009. Spatially constrained rarefaction:
+#'  incorporating the autocorrelated structure of biological communities into
+#'   sample-based rarefaction. - Community Ecology 10: 209–214.
+#'
+#' @return The function returns a list of two dataframes. The first, \code{sSBR_data} includes
+#'         all accumulated distances and their respective accumulated species richness for
+#'         the same number of rarefaction curves as there are samples in the data set.
+#'         Each samples is used as a starting point and then samples are accumulated
+#'         by distances to the k nearest neighbour.
+#'         The second dataframe, \code{ssBR_smooth} includes a non-linear smoother
+#'        \code{\link[stats]{loess}} for the relationship between cimulative distance and
+#'        cumulative species richness.
+#' @export
+#'
 
-# Diese Funktion errechnet die räumliche und Stichproben-basierte Rarefaction curve
-# (auch spatial, sample-based rarefaction curve, sSBR after McGlinn et al. 2019)
-# oder auch spatially-constrained rarefaction curve (SCR), after Chiarucci et al. 2009
-# Im Unterschied zu McGlinn und Chairucci wird dabei aber nicht die Anzahl an Stichproben
-# auf der x-Achse darstellt, sondern die mittlere Distanz zwischen einer
-# gegebenen Anzahl von Stichproben
-#
-# Argumente:
-# comm ... community matrix mit den Stichproben als Zeilen und den Arten als Spalten
-#          Die Matrix kann Abundanzen enthalten oder auch nur 0 für Art kommt nicht vor
-#          und 1 fuer Art kommt vor
-# xy_coords ... die x und y Koordinaten der Stichproben
-#
-# Ausgabe der Funktion:
-# data.frame mit den folgenden Spalten:
-# n ... Anzahl der Stichproben
-# mean_dist ... mittlere Distanz zwischen den n-Stichproben
-# mean_S    ... mittlere Artenzahl in den n-Stichproben
-# low_S, up_S ... obere und untere Grenze des 95%-Konfidenzintervalls er Artenzahl
-
-SCR <- function(comm,
+sSBR <- function(comm,
                 xy_coords) {
   comm <- (comm > 0) * 1 # change to presence-absence matrix
   n <- nrow(comm)

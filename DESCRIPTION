@@ -16,3 +16,4 @@ Suggests:
     tidyverse
 URL: https://github.com/FelixMay/spatialbiodiv
 BugReports: https://github.com/FelixMay/spatialbiodiv/issues
+RoxygenNote: 7.2.1

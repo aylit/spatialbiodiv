@@ -1,22 +1,24 @@
-#' Distance decay of similarity
+#' Distance-decay of similarity
 #'
-#' Estimate pairwise similarities of communities in subplots as
+#' Estimate pairwise similarities of communities in samples as
 #' function of distance
 #'
-#' @param comm \code{\link{community}} object
-#' @param prop_area Subplot size as proportion of the total area
-#' @param n_samples Number of randomly located subplots
+#' @param comm Community matrix with samples in rows and species in columns.
+#'             The matrix can contain presence/absence data (coded with 0/1) or
+#'             abundance data with counts of individuals.
+#'
+#' @param xy_coords Two-column table with x-y coordinates of the samples.
+
 #' @param method Choice of (dis)similarity index. See \code{\link[vegan]{vegdist}}
+#'
 #' @param binary Perform presence/absence standardization before analysis?
 #' See \code{\link[vegan]{vegdist}}
 #'
-#' @return Dataframe with distances between subplot pairs and the respective
-#' similarity indices
-#'
-#' @examples
-#' sim_com1 <- sim_thomas_community(100, 10000, sigma = 0.1, mother_points = 2)
-#' dd1 <- dist_decay(sim_com1, prop_area = 0.005, n_samples = 20)
-#' plot(dd1)
+#' @return The function returns a list of two dataframes. The first, \code{dd_data} includes
+#'         all pairwise distances and their respective similarities.
+#'         The second, \code{dd_smooth} includes a non-linear smoother
+#'        \code{\link[stats]{loess}} for the relationship between distance and
+#'        similarity.
 #'
 #'@export
 #'
