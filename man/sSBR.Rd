@@ -15,13 +15,13 @@ abundance data with counts of individuals.}
 }
 \value{
 The function returns a list of two dataframes. The first, \code{sSBR_data} includes
-        all accumulated distances and their respective accumulated species richness for
-        the same number of rarefaction curves as there are samples in the data set.
-        Each samples is used as a starting point and then samples are accumulated
-        by distances to the k nearest neighbour.
-        The second dataframe, \code{ssBR_smooth} includes a non-linear smoother
-       \code{\link[stats]{loess}} for the relationship between cumulative distance and
-       cumulative species richness.
+all accumulated distances and their respective accumulated species richness for
+the same number of rarefaction curves as there are samples in the data set.
+Each samples is used as a starting point and then samples are accumulated
+by distances to the k nearest neighbour.
+The second dataframe, \code{ssBR_smooth} includes a non-linear smoother
+\link[stats:loess]{stats::loess} for the relationship between cumulative distance and
+cumulative species richness.
 }
 \description{
 This function calculates the spatial and sample-based species rarefaction curve
@@ -34,10 +34,10 @@ among samples as x-axis and not the accumulated number of samples.
 }
 \references{
 McGlinn, D. J. et al. 2019. Measurement of Biodiversity (MoB):
- A method to separate the scale-dependent effects of species abundance distribution,
-  density, and aggregation on diversity change. - Methods in Ecology and Evolution 10: 258–269.
+A method to separate the scale-dependent effects of species abundance distribution,
+density, and aggregation on diversity change. - Methods in Ecology and Evolution 10: 258–269.
 
- Chiarucci, A. et al. 2009. Spatially constrained rarefaction:
- incorporating the autocorrelated structure of biological communities into
-  sample-based rarefaction. - Community Ecology 10: 209–214.
+Chiarucci, A. et al. 2009. Spatially constrained rarefaction:
+incorporating the autocorrelated structure of biological communities into
+sample-based rarefaction. - Community Ecology 10: 209–214.
 }

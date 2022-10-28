@@ -18,5 +18,6 @@ Suggests:
     tidyverse
 URL: https://github.com/FelixMay/spatialbiodiv
 BugReports: https://github.com/FelixMay/spatialbiodiv/issues
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 VignetteBuilder: knitr

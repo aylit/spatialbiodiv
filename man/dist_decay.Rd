@@ -20,10 +20,10 @@ See \code{\link[vegan]{vegdist}}}
 }
 \value{
 The function returns a list of two dataframes. The first, \code{dd_data} includes
-        all pairwise distances and their respective similarities.
-        The second, \code{dd_smooth} includes a non-linear smoother
-       \code{\link[stats]{loess}} for the relationship between distance and
-       similarity.
+all pairwise distances and their respective similarities.
+The second, \code{dd_smooth} includes a non-linear smoother
+\code{\link[stats]{loess}} for the relationship between distance and
+similarity.
 }
 \description{
 Estimate pairwise similarities of communities in samples as

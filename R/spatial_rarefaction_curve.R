@@ -21,13 +21,13 @@
 #'  incorporating the autocorrelated structure of biological communities into
 #'   sample-based rarefaction. - Community Ecology 10: 209–214.
 #'
-#' @return The function returns a list of two dataframes. The first, \code{sSBR_data} includes
+#' @return The function returns a list of two dataframes. The first, `sSBR_data` includes
 #'         all accumulated distances and their respective accumulated species richness for
 #'         the same number of rarefaction curves as there are samples in the data set.
 #'         Each samples is used as a starting point and then samples are accumulated
 #'         by distances to the k nearest neighbour.
-#'         The second dataframe, \code{ssBR_smooth} includes a non-linear smoother
-#'        \code{\link[stats]{loess}} for the relationship between cumulative distance and
+#'         The second dataframe, `ssBR_smooth` includes a non-linear smoother
+#'        [stats::loess()] for the relationship between cumulative distance and
 #'        cumulative species richness.
 #' @export
 #'
