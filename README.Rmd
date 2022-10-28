@@ -27,19 +27,19 @@ or abundances from standardized samples in landscapes.
 
 You can install the development version of spatialbiodiv from [GitHub](https://github.com/) with:
 
-``` r
+```{r}
 # install.packages("devtools")
 devtools::install_github("FelixMay/spatialbiodiv", build_vignettes = TRUE)
 ```
 
 ## Example
 
-For application examples see "analysis/analyse_sim_dat1.html"
-
-This is a basic example which shows you how to solve a common problem:
+For an example application see the package vignette 
+"Test analysis of simulated data":
 
 ```{r example}
 library(spatialbiodiv)
-## basic example code
+browseVignettes("spatialbiodiv")
 ```
+
 

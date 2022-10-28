@@ -20,15 +20,17 @@ You can install the development version of spatialbiodiv from
 ``` r
 # install.packages("devtools")
 devtools::install_github("FelixMay/spatialbiodiv", build_vignettes = TRUE)
+#> Skipping install of 'spatialbiodiv' from a github remote, the SHA1 (d79600f4) has not changed since last install.
+#>   Use `force = TRUE` to force installation
 ```
 
 ## Example
 
-For application examples see “analysis/analyse_sim_dat1.html”
-
-This is a basic example which shows you how to solve a common problem:
+For an example application see the package vignette “Test analysis of
+simulated data”:
 
 ``` r
 library(spatialbiodiv)
-## basic example code
+browseVignettes("spatialbiodiv")
+#> starte den http Server für die Hilfe fertig
 ```
