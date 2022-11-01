@@ -74,14 +74,22 @@ sSBR <- function(comm,
 
   out_dat <- out_dat[order(out_dat$id, out_dat$distance),]
 
-  loess1 <-  stats::loess(S ~ distance, data = out_dat)
+  # Fit model - GAM with monotonously increasing constraint
+  scam1 <- scam(S ~ s(distance, bs = "mpi"),
+                data = out_dat, family = "poisson")
 
+  # New data
   out_pred <- data.frame(distance = seq(min(out_dat$distance),
                                         max(out_dat$distance),
                                         length = 200),
                          S        = NA)
 
-  out_pred$S <- stats::predict(loess1, newdata = out_pred)
+  # Predictions - SCAM
+  pred <- predict(scam1, out_pred, se = T, type = "response")
+
+  out_pred$S <- pred$fit
+  out_pred$S_low <- pred$fit - 2*pred$se.fit
+  out_pred$S_high <- pred$fit + 2*pred$se.fit
 
   return(list(sSBR_data = out_dat, sSBR_smooth = out_pred))
 

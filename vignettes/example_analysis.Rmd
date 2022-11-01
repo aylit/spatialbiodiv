@@ -18,13 +18,16 @@ knitr::opts_chunk$set(
 library(spatialbiodiv)
 library(tidyverse)
 library(vegan)
+library(scam)
 knitr::opts_knit$set(root.dir = "..")
 ```
 
 # Read and prepare the data
 
 ```{r}
-simdat1 <- read.table("data_raw/GeDo_test5_rep_10_output_sample.txt", header = TRUE, sep = ",")
+getwd()
+simdat1 <- read.table("data_raw/GeDo_test5_rep_10_output_sample.txt", header = TRUE,
+                      sep = ",")
 simdat1 <- simdat1 %>% select(-X)
 ```
 
@@ -88,7 +91,10 @@ ggplot(sSBR_data, aes(distance, S, group = interaction(id, fragmentation),
                       color = fragmentation)) +
   geom_line() +
   geom_line(aes(distance, S, color = fragmentation, group = fragmentation),
-            data = sSBR_smooth, size = 2)
+            data = sSBR_smooth, size = 2) +
+  geom_ribbon(aes(x = distance, y = S, ymin = S_low, ymax = S_high,
+                  fill = fragmentation, group = fragmentation), color = "black",
+              data = sSBR_smooth, alpha = 0.2)
 ```
 
 # Distance-decay curves
