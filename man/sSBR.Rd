@@ -19,9 +19,11 @@ all accumulated distances and their respective accumulated species richness for
 the same number of rarefaction curves as there are samples in the data set.
 Each samples is used as a starting point and then samples are accumulated
 by distances to the k nearest neighbour.
-The second dataframe, \code{ssBR_smooth} includes a non-linear smoother
-\link[stats:loess]{stats::loess} for the relationship between cumulative distance and
-cumulative species richness.
+The second dataframe, \code{ssBR_smooth} includes a GAM model with the constraint
+of a monotonously increasing function \code{\link[scam:scam]{scam::scam()}}
+for the relationship between cumulative distance and
+cumulative species richness (because richness cannot decrease with
+additional samples).
 }
 \description{
 This function calculates the spatial and sample-based species rarefaction curve

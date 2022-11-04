@@ -123,5 +123,8 @@ dd_smooth <- bind_rows(dd_frag01$dd_smooth, dd_frag05$dd_smooth)
 ggplot(dd_data, aes(distance, similarity, color = fragmentation)) +
   geom_point() +
   geom_line(aes(distance, similarity, color = fragmentation, group = fragmentation),
-            data = dd_smooth, size = 2)
+            data = dd_smooth, size = 2) +
+  geom_ribbon(aes(x = distance, y = similarity, ymin = simi_low, ymax = simi_high,
+                  fill = fragmentation, group = fragmentation), color = "black",
+              data = dd_smooth, alpha = 0.2)
 ```

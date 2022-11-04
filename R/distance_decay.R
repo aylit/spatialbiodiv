@@ -16,8 +16,8 @@
 #'
 #' @return The function returns a list of two dataframes. The first, \code{dd_data} includes
 #'         all pairwise distances and their respective similarities.
-#'         The second, \code{dd_smooth} includes a non-linear smoother
-#'        \code{\link[stats]{loess}} for the relationship between distance and
+#'         The second, \code{dd_smooth} includes a fitted GAM
+#'        \code{\link[mgcv]{gam}} for the relationship between distance and
 #'        similarity.
 #'
 #'@export
@@ -43,9 +43,15 @@ dist_decay <- function(comm, xy_coords, method = "bray", binary = F)
                                         length = 200),
                          similarity = NA)
 
-  loess1 <-  stats::loess(similarity ~ distance, data = out_dat)
+  # Fit model - GAM with monotonously increasing constraint
+  gam1 <- mgcv::gam(similarity ~ s(distance), data = out_dat)
 
-  out_pred$similarity <- stats::predict(loess1, newdata = out_pred)
+  # Predictions - SCAM
+  pred <- stats::predict(gam1, out_pred, se = T)
+
+  out_pred$similarity <- pred$fit
+  out_pred$simi_low <- pred$fit - 2*pred$se.fit
+  out_pred$simi_high <- pred$fit + 2*pred$se.fit
 
   return(list(dd_data = out_dat, dd_smooth = out_pred))
 }

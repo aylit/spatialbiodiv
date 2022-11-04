@@ -26,9 +26,11 @@
 #'         the same number of rarefaction curves as there are samples in the data set.
 #'         Each samples is used as a starting point and then samples are accumulated
 #'         by distances to the k nearest neighbour.
-#'         The second dataframe, `ssBR_smooth` includes a non-linear smoother
-#'        [stats::loess()] for the relationship between cumulative distance and
-#'        cumulative species richness.
+#'         The second dataframe, `ssBR_smooth` includes a GAM model with the constraint
+#'         of a monotonously increasing function [scam::scam()]
+#'         for the relationship between cumulative distance and
+#'         cumulative species richness (because richness cannot decrease with
+#'         additional samples).
 #' @export
 #'
 
