@@ -25,7 +25,6 @@ knitr::opts_knit$set(root.dir = "..")
 # Read and prepare the data
 
 ```{r}
-getwd()
 simdat1 <- read.table("data_raw/GeDo_test5_rep_10_output_sample.txt", header = TRUE,
                       sep = ",")
 simdat1 <- simdat1 %>% select(-X)
@@ -63,12 +62,18 @@ xy_frag05 <-  frag_high %>%
   select(loc_x, loc_y)
 ```
 
-# Spatial sample-based rarefaction curves (sSBR)
+# Calculate spatial sample-based rarefaction curves (sSBR)
+
+Actually the code for sSBR was adopted from the corresponding curves
+in **mobr**. The only difference is that mobr has the cumulative sampling effort
+on the x-axis, while here cumulative nearest neighbour distances
+are on the x-axis.
 
 ```{r}
 sSBR_frag01 <- sSBR(comm = frag01_spec, xy_coords = xy_frag01)
 sSBR_frag05 <- sSBR(comm = frag05_spec, xy_coords = xy_frag05)
 ```
+
 
 ## Create dataframe for plotting with ggplot
 
