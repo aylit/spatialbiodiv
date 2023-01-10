@@ -1,5 +1,3 @@
-#' https://i.gifer.com/origin/55/552efc18e12ded1eb57fc086a690d591_w200.gif
-
 #' library(vegan)
 #' library(tidyverse)
 #' library(ggplot2)
