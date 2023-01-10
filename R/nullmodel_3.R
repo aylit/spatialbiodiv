@@ -6,7 +6,7 @@
 #' library(scam)
 
 #' setwd("C:/Users/aylin/Desktop/frag_mod_scale-main/simulation_1")
-#' simdat0 <- read.csv("sSBR2_rep_1_output_sample.csv", header=TRUE, sep = ",")
+#' simdat0 <- read.csv("sSBR7_rep_1_output_sample.csv", header=TRUE, sep = ",")
 
 #' next step: isolate the sSBR function into an additional one so it's cleaner!
 #' 
@@ -36,7 +36,7 @@
     
     nd <- data.frame(matrix(0,
                             nrow = 100,
-                            ncol = sum(permutations) +1))
+                            ncol = sum(permutations)+1))
     
     colnames(nd) <- c("distance",1:permutations)
     
@@ -145,7 +145,7 @@
     #' percentile, i now use the 95% of all permutations as the ymax and the 5% as the ymin
     #' and r wants me to transform nd to a matrix instead of data.table
     #' TIP: in a table [x,y] stands for [row,column]     
-    
+
     nd <- as.matrix(nd)
     
     ribbonbase <- data.frame(matrix(0,
@@ -157,12 +157,12 @@
     #' this saves the distances as one column because geom_ribbon needs an x value
     
     ribbonbase[,1] <- nd[,1]
-    
+  
     #' looping through all permutations to create the data.set used for my ribbon
     
     for (i in 1:nrow(ribbonbase)) {
-      ribbonbase[i,2] <- quantile(nd[i,2:11], probs = c(0.05))
-      ribbonbase[i,3] <- quantile(nd[i,2:11], probs = c(0.95))
+      ribbonbase[i,2] <- quantile(nd[i,2:sum(permutations)+1], probs = c(0.05))
+      ribbonbase[i,3] <- quantile(nd[i,2:sum(permutations)+1], probs = c(0.95))
       ribbonbase[i,4] <- min(nd[i,])
       ribbonbase[i,5] <- max(nd[i,])
     }
@@ -184,6 +184,8 @@
     
     print(p)
     ggsave("plot.jpg")
+    print(nd)
+    print(ribbonbase)
     
   }
 
