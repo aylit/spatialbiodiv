@@ -18,7 +18,6 @@
   #' @param data the data frame we want to look at, e.g. stav's output
   #' @param frag_level we currently look at frag = 0.1 and 0.9, has to be in the data frame
   #' @param timestep 41 is currently directly after frag and 100 is at the end of sim
-  #' @param permutations i'll do this with 10 for now probs but should be 100
   
   null_model = function(dataset, frag_level_low, frag_level_high, timestep, 
                         permutations, sample_size) {
@@ -31,18 +30,17 @@
     #'    frag_level_low <- 0.1
     #'    frag_level_high <- 0.9
     #'    timestep <- 41
-    #'    permutations <- 10
     #'    sample_size <- 50
     
     nd <- data.frame(matrix(0,
                             nrow = 100,
-                            ncol = sum(permutations)+1))
+                            ncol = 101)
     
     colnames(nd) <- c("distance",1:permutations)
     
     #' this runs the sSBR for n amount of permutations
     
-    for(i in 1:permutations) {
+    for(i in 1:100) {
       
       data_null <- dataset
       
@@ -161,8 +159,8 @@
     #' looping through all permutations to create the data.set used for my ribbon
     
     for (i in 1:nrow(ribbonbase)) {
-      ribbonbase[i,2] <- quantile(nd[i,2:sum(permutations)+1], probs = c(0.05))
-      ribbonbase[i,3] <- quantile(nd[i,2:sum(permutations)+1], probs = c(0.95))
+      ribbonbase[i,2] <- quantile(nd[i,2:101], probs = c(0.05))
+      ribbonbase[i,3] <- quantile(nd[i,2:101], probs = c(0.95))
       ribbonbase[i,4] <- min(nd[i,])
       ribbonbase[i,5] <- max(nd[i,])
     }
