@@ -25,6 +25,7 @@ knitr::opts_knit$set(root.dir = "..")
 # Read and prepare the data
 
 ```{r}
+#setwd("..")
 simdat1 <- read.table("data_raw/GeDo_test5_rep_10_output_sample.txt", header = TRUE,
                       sep = ",")
 simdat1 <- simdat1 %>% select(-X)

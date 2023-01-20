@@ -10,6 +10,9 @@
 #'
 #' @param xy_coords Two-column table with x-y coordinates of the samples.
 #'
+#' @param distvec Distance vector for the interpolation of the sSBR curve using
+#'                a monotonously increasing GAM model (see below)
+#'
 #' @details In contrast to McGlinn et al. 2019, this function uses accumulated distances
 #' among samples as x-axis and not the accumulated number of samples.
 #'
@@ -35,7 +38,8 @@
 #'
 
 sSBR <- function(comm,
-                xy_coords) {
+                xy_coords,
+                distvec = NULL) {
   comm <- (comm > 0) * 1 # change to presence-absence matrix
   n <- nrow(comm)
   # drop species with no observations
@@ -81,9 +85,13 @@ sSBR <- function(comm,
                 data = out_dat, family = "poisson")
 
   # New data
-  out_pred <- data.frame(distance = seq(min(out_dat$distance),
-                                        max(out_dat$distance),
-                                        length = 200),
+  if (is.null(distvec)){
+    distvec = seq(min(out_dat$distance),
+                   max(out_dat$distance),
+                   length = 200)
+  }
+
+  out_pred <- data.frame(distance = distvec,
                          S        = NA)
 
   # Predictions - SCAM
@@ -92,6 +100,8 @@ sSBR <- function(comm,
   out_pred$S <- pred$fit
   out_pred$S_low <- pred$fit - 2*pred$se.fit
   out_pred$S_high <- pred$fit + 2*pred$se.fit
+  # These confidence intervals ignore the dependence between the points,
+  # so they are likely inappropiate.
 
   return(list(sSBR_data = out_dat, sSBR_smooth = out_pred))
 

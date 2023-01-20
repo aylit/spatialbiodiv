@@ -36,7 +36,7 @@ You can install the development version of spatialbiodiv from [GitHub](https://g
 
 ```{r}
 # install.packages("devtools")
-devtools::install_github("FelixMay/spatialbiodiv", build_vignettes = TRUE)
+# devtools::install_github("FelixMay/spatialbiodiv", build_vignettes = TRUE)
 ```
 
 # Example 1
@@ -97,6 +97,23 @@ xy_frag05 <-  frag_high %>%
   select(loc_x, loc_y)
 ```
 
+## Define distances fo sSBR evaluation
+
+We need to define distances for the evaluation of the sSBR curves. For this, we 
+find the maximum distances in both data sets and take the smaller value of these maxima
+as maximum distances for the comparison of the sSBR curves.
+
+```{r}
+dist_frag_low <- dist(xy_frag01)
+dist_frag_high <- dist(xy_frag05)
+min_dist <- min(c(max(dist_frag_low), max(dist_frag_high)))
+```
+For interpolation we need the same distance-values for both curves
+
+```{r}
+new_dist <- data.frame(distance = seq(0, min_dist, length = 100))
+```
+
 ## Calculate spatial sample-based rarefaction curves (sSBR)
 
 Actually the code for sSBR was adopted from the corresponding curves
@@ -105,8 +122,8 @@ on the x-axis, while here cumulative nearest neighbour distances
 are on the x-axis.
 
 ```{r}
-sSBR_frag01 <- sSBR(comm = frag01_spec, xy_coords = xy_frag01)
-sSBR_frag05 <- sSBR(comm = frag05_spec, xy_coords = xy_frag05)
+sSBR_frag01 <- sSBR(comm = frag01_spec, xy_coords = xy_frag01, distvec = new_dist)
+sSBR_frag05 <- sSBR(comm = frag05_spec, xy_coords = xy_frag05, distvec = new_dist)
 ```
 
 
@@ -141,41 +158,9 @@ ggplot(sSBR_data, aes(distance, S, group = interaction(id, fragmentation),
 Now, our key question if the two curves differ significantly. To answer this,
 we first need to calculate the difference between the two curves.
 
-### Calculate smallest maximim distance
-
-We can only compare the curves up to the smallest maximum distance of the
-two scenarios. So we get the minimal distance of the maxima of both 
-fragmentation scenarios
 
 ```{r}
-min_dist <- round(min(c(max(sSBR_frag01$sSBR_data$distance),
-                        max(sSBR_frag05$sSBR_data$distance))))
-```
-
-### Distance values for interpolation
-
-For interpolation we need the same distance-values for both curves
-
-```{r}
-new_dist <- data.frame(distance = seq(0, min_dist, length = 100))
-```
-
-### Fit SCAM models for each scenario
-
-```{r}
-scam_low_frag <- scam(S ~ s(distance, bs = "mpi"),
-                      data = sSBR_frag01$sSBR_data, family = "poisson")
-scam_high_frag <- scam(S ~ s(distance, bs = "mpi"),
-                       data = sSBR_frag05$sSBR_data, family = "poisson")
-```
-
-### Predict species richness for new distance values
-
-```{r}
-pred_low_frag <- predict(scam_low_frag, new_dist, type = "response")
-pred_high_frag <- predict(scam_high_frag, new_dist, type = "response")
-
-new_dist$diff_sSBR <- pred_high_frag - pred_low_frag
+new_dist$diff_sSBR <- sSBR_frag05$sSBR_smooth$S - sSBR_frag01$sSBR_smooth$S
 ```
 
 ```{r}

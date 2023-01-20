@@ -5,17 +5,17 @@
 library(spatialbiodiv)
 library(tidyverse)
 #> ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-#> ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
+#> ✔ ggplot2 3.4.0      ✔ purrr   0.3.5 
 #> ✔ tibble  3.1.8      ✔ dplyr   1.0.10
 #> ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
-#> ✔ readr   2.1.2      ✔ forcats 0.5.2 
+#> ✔ readr   2.1.3      ✔ forcats 0.5.2 
 #> ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 #> ✖ dplyr::filter() masks stats::filter()
 #> ✖ dplyr::lag()    masks stats::lag()
 library(vegan)
 #> Lade nötiges Paket: permute
 #> Lade nötiges Paket: lattice
-#> This is vegan 2.6-2
+#> This is vegan 2.6-4
 library(scam)
 #> Lade nötiges Paket: mgcv
 #> Lade nötiges Paket: nlme
@@ -26,7 +26,7 @@ library(scam)
 #> 
 #>     collapse
 #> 
-#> This is mgcv 1.8-40. For overview type 'help("mgcv-package")'.
+#> This is mgcv 1.8-41. For overview type 'help("mgcv-package")'.
 #> This is scam 1.2-13.
 ```
 
@@ -48,9 +48,7 @@ You can install the development version of spatialbiodiv from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("FelixMay/spatialbiodiv", build_vignettes = TRUE)
-#> Skipping install of 'spatialbiodiv' from a github remote, the SHA1 (709244e0) has not changed since last install.
-#>   Use `force = TRUE` to force installation
+# devtools::install_github("FelixMay/spatialbiodiv", build_vignettes = TRUE)
 ```
 
 # Example 1
@@ -61,7 +59,7 @@ simulated data”:
 ``` r
 library(spatialbiodiv)
 browseVignettes("spatialbiodiv")
-#> starte den http Server für die Hilfe fertig
+#> Keine Vignetten gefunden durch browseVignettes("spatialbiodiv")
 ```
 
 # Example 2: Get differences between distance-based curves
@@ -112,6 +110,25 @@ xy_frag05 <-  frag_high %>%
   select(loc_x, loc_y)
 ```
 
+## Define distances fo sSBR evaluation
+
+We need to define distances for the evaluation of the sSBR curves. For
+this, we find the maximum distances in both data sets and take the
+smaller value of these maxima as maximum distances for the comparison of
+the sSBR curves.
+
+``` r
+dist_frag_low <- dist(xy_frag01)
+dist_frag_high <- dist(xy_frag05)
+min_dist <- min(c(max(dist_frag_low), max(dist_frag_high)))
+```
+
+For interpolation we need the same distance-values for both curves
+
+``` r
+new_dist <- data.frame(distance = seq(0, min_dist, length = 100))
+```
+
 ## Calculate spatial sample-based rarefaction curves (sSBR)
 
 Actually the code for sSBR was adopted from the corresponding curves in
@@ -120,8 +137,8 @@ effort on the x-axis, while here cumulative nearest neighbour distances
 are on the x-axis.
 
 ``` r
-sSBR_frag01 <- sSBR(comm = frag01_spec, xy_coords = xy_frag01)
-sSBR_frag05 <- sSBR(comm = frag05_spec, xy_coords = xy_frag05)
+sSBR_frag01 <- sSBR(comm = frag01_spec, xy_coords = xy_frag01, distvec = new_dist)
+sSBR_frag05 <- sSBR(comm = frag05_spec, xy_coords = xy_frag05, distvec = new_dist)
 ```
 
 ## Create dataframe for plotting with ggplot
@@ -148,50 +165,19 @@ ggplot(sSBR_data, aes(distance, S, group = interaction(id, fragmentation),
   geom_ribbon(aes(x = distance, y = S, ymin = S_low, ymax = S_high,
                   fill = fragmentation, group = fragmentation), color = "black",
               data = sSBR_smooth, alpha = 0.2)
+#> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+#> ℹ Please use `linewidth` instead.
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" />
 
 ## Calculate difference between the curves
 
 Now, our key question if the two curves differ significantly. To answer
 this, we first need to calculate the difference between the two curves.
 
-### Calculate smallest maximim distance
-
-We can only compare the curves up to the smallest maximum distance of
-the two scenarios. So we get the minimal distance of the maxima of both
-fragmentation scenarios
-
 ``` r
-min_dist <- round(min(c(max(sSBR_frag01$sSBR_data$distance),
-                        max(sSBR_frag05$sSBR_data$distance))))
-```
-
-### Distance values for interpolation
-
-For interpolation we need the same distance-values for both curves
-
-``` r
-new_dist <- data.frame(distance = seq(0, min_dist, length = 100))
-```
-
-### Fit SCAM models for each scenario
-
-``` r
-scam_low_frag <- scam(S ~ s(distance, bs = "mpi"),
-                      data = sSBR_frag01$sSBR_data, family = "poisson")
-scam_high_frag <- scam(S ~ s(distance, bs = "mpi"),
-                       data = sSBR_frag05$sSBR_data, family = "poisson")
-```
-
-### Predict species richness for new distance values
-
-``` r
-pred_low_frag <- predict(scam_low_frag, new_dist, type = "response")
-pred_high_frag <- predict(scam_high_frag, new_dist, type = "response")
-
-new_dist$diff_sSBR <- pred_high_frag - pred_low_frag
+new_dist$diff_sSBR <- sSBR_frag05$sSBR_smooth$S - sSBR_frag01$sSBR_smooth$S
 ```
 
 ``` r
@@ -199,7 +185,7 @@ ggplot(new_dist, aes(distance, diff_sSBR)) +
   geom_point() + geom_line()
 ```
 
-<img src="man/figures/README-unnamed-chunk-14-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
 
 This is the difference for the red and blue curves in the previous
 figure. This seems to indicate that for high fragmentation we find more
@@ -217,9 +203,9 @@ scenarios is the way to go.
 
 With respect to coding the question is:
 
--   Integrate the permutation test into this mini package (likely with a
-    lot of copy-paste from mobr code), or
+- Integrate the permutation test into this mini package (likely with a
+  lot of copy-paste from mobr code), or
 
--   Integrate these distance-based curves in mobr, which so far always
-    has sampling effort (no. of samples or no. of individuals) on the
-    x-axis and as basis for the comparison among curves.
+- Integrate these distance-based curves in mobr, which so far always has
+  sampling effort (no. of samples or no. of individuals) on the x-axis
+  and as basis for the comparison among curves.
