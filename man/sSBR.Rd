@@ -4,7 +4,7 @@
 \alias{sSBR}
 \title{Spatially-explicit sample-based species rarefaction curve}
 \usage{
-sSBR(comm, xy_coords)
+sSBR(comm, xy_coords, distvec = NULL)
 }
 \arguments{
 \item{comm}{Community matrix with samples in rows and species in columns.
@@ -12,6 +12,9 @@ The matrix can contain presence/absence data (coded with 0/1) or
 abundance data with counts of individuals.}
 
 \item{xy_coords}{Two-column table with x-y coordinates of the samples.}
+
+\item{distvec}{Distance vector for the interpolation of the sSBR curve using
+a monotonously increasing GAM model (see below)}
 }
 \value{
 The function returns a list of two dataframes. The first, \code{sSBR_data} includes
