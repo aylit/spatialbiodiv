@@ -32,9 +32,7 @@
     #'    timestep <- 41
     #'    sample_size <- 50
 
-    nd <- data.frame(matrix(0,
-                            nrow = 100,
-                            ncol = 101)
+    nd <- data.frame(matrix(0, nrow = 100, ncol = 101))
 
     colnames(nd) <- c("distance",1:permutations)
 
