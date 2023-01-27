@@ -4,6 +4,7 @@ library(ggplot2)
 library(mobr)
 library(spatialbiodiv)
 library(scam)
+library(matrixStats)
 
 #' GET_sSBR_DIST()
 #' the parameters of the function:
@@ -52,22 +53,22 @@ library(scam)
     
     }
   
-  #' GET_NULL_INTERVALL()
+  #' GET_NULL_MODEL()
   #' the parameters of the function (same as above):
   #' @param data the data frame we want to look at, e.g. stav's output
   #' @param frag_level we currently look at frag = 0.1 and 0.9, has to be in the data frame
   #' @param timestep 41 is currently directly after frag and 100 is at the end of sim
   
   get_null_model = function(dataset, frag_level_low, frag_level_high, 
-                        sample_size) {
+                        sample_size, permutations) {
     
-    nd <- data.frame(matrix(0,
+    nd <- matrix(0,
                             nrow = 100,
-                            ncol = 101))
+                            ncol = permutations)
     
-    #' this runs the sSBR for 100 permutations by default
+    #' this runs the sSBR for n permutations
     
-    for(i in 1:100) {
+    for(i in 1:permutations) {
       
       data_null <- dataset
       
@@ -107,13 +108,10 @@ library(scam)
       #' i'm creating a table that grows with each permutation so i can later use quantile()
       #' on all permutations for distance x
       #' TIP: in a table [x,y] stands for [row,column]      
-      
-      nd[,1] <- new_dist[,1]
-      nd[,i+1] <- new_dist[,2]
+
+      nd[,i] <- new_dist[,2]
       
     }
-
-    nd <- as.matrix(nd)
     
     ribbonbase <<- data.frame(matrix(0,
                                     nrow = nrow(nd),
@@ -123,17 +121,14 @@ library(scam)
     
     #' this saves the distances as one column because geom_ribbon needs an x value
     
-    ribbonbase[,1] <<- nd[,1]
+    ribbonbase[,1] <<- new_dist[,1]
   
-    #' looping through all permutations to create the data.set used for my ribbon
-    #' 25.01.23: i've not yet found a way to replace this loop!
-    
-    for (i in 1:nrow(ribbonbase)) {
-      ribbonbase[i,2] <<- quantile(nd[i,2:101], probs = c(0.025))
-      ribbonbase[i,3] <<- quantile(nd[i,2:101], probs = c(0.975))
-      ribbonbase[i,4] <<- min(nd[i,])
-      ribbonbase[i,5] <<- max(nd[i,])
-    }
+    #' former quantiles() loop now replaced by matrixStats::rowQuantiles()
+  
+      ribbonbase[,2] <<- rowQuantiles(nd, probs = 0.025)
+      ribbonbase[,3] <<- rowQuantiles(nd, probs = 0.975)
+      ribbonbase[,4] <<- rowQuantiles(nd, probs = 0) # should do the same as min
+      ribbonbase[,5] <<- rowQuantiles(nd, probs = 1) # should do the same as max
     
     # returning ribbonbase (optional)
     
